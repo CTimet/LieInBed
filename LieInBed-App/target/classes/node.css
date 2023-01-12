@@ -1,0 +1,15 @@
+/*.buttonClick {*/
+/*    -fx-background-color: #3b3b3b;*/
+/*}*/
+
+.button {
+    -fx-background-color: #2a2a2a;
+}
+
+.button:hover {
+    -fx-background-color: #3b3b3b;
+}
+
+.box {
+    -fx-background-color: #2a2a2a;
+}
