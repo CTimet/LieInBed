@@ -7,13 +7,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="RemoteRobot" />
         <module name="LieInBed-App" />
         <module name="LieInBed-AppLaucher" />
+        <module name="RemoteServer" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="LieInBed-App" target="8" />
       <module name="LieInBed-AppLaucher" target="8" />
+      <module name="RemoteRobot" target="8" />
+      <module name="RemoteServer" target="8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

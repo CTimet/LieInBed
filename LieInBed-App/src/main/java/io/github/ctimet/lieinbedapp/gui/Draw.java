@@ -11,8 +11,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -36,6 +38,7 @@ public class Draw {
     public static void draw(Stage stage) {
         ObjectBinding<Color> WHITE = Bindings.createObjectBinding(() -> Color.WHITE);
 
+
         ButtonsBox box = new ButtonsBox(0, 0, 162, 680)
                 .setChildrenHeight(48)
                 .setEachSpace(5)
@@ -46,11 +49,14 @@ public class Draw {
                 .addTopButton("机器人列表   ", SVGUtil.list(WHITE, 19, 19), event -> {
 
                 })
-
                 .init();
         CSSStyle.addDefaultStyle(box, "box");
+        box.setOpacity(0.55);
 
-        pane.getChildren().add(box);
+        pane.getChildren().addAll(
+                new ImageView(new Image(Objects.requireNonNull(Draw.class.getResourceAsStream("/background.png")))),
+                box
+        );
 
         pane.setStyle("-fx-background-color: #f5f5f5;");
 
@@ -60,6 +66,7 @@ public class Draw {
 
         Image icon = new Image(Objects.requireNonNull(Draw.class.getResourceAsStream("/icon.png")));
         stage.getIcons().add(icon);
+        stage.setResizable(false);
         stage.show();
     }
 

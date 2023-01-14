@@ -56,9 +56,13 @@ public class ServerListClickHandler implements EventHandler<ActionEvent> {
             //在同一时间我们还要准备要入场的新组件
             VBox serverType = new VBox();
             JFXButton localServer = new JFXButton("+ 本地服务器");
-            localServer.setOnAction(le -> waitRemove.clear());
+            localServer.setOnAction(le -> {
+
+            });
             JFXButton remoteServer = new JFXButton("+ 远程服务器");
-            remoteServer.setOnAction(re -> waitRemove.clear());
+            remoteServer.setOnAction(re -> {
+
+            });
             serverType.getChildren().addAll(localServer, remoteServer);
 
             Task.runInCachedPool(() -> {

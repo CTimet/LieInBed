@@ -1,4 +1,8 @@
 package io.github.ctimet.lieinbedapp.servers.connect;
 
-public class ServerConnect {
+public interface ServerConnect {
+    void startServer();
+    void stopServer();
+    void restartServer();
+
 }

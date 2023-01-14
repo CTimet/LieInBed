@@ -5,6 +5,8 @@
       <list>
         <option value="$PROJECT_DIR$/LieInBed-App/pom.xml" />
         <option value="$PROJECT_DIR$/LieInBed-AppLaucher/pom.xml" />
+        <option value="$PROJECT_DIR$/RemoteServer/pom.xml" />
+        <option value="$PROJECT_DIR$/RemoteRobot/pom.xml" />
       </list>
     </option>
   </component>
