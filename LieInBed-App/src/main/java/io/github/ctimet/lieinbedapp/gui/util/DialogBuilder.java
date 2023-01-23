@@ -26,6 +26,7 @@ public class DialogBuilder {
     private Node[] body;
 
     private JFXAlert<String> alert;
+    private JFXButton ok;
 
     public DialogBuilder(Control control) {
         window = control.getScene().getWindow();
@@ -60,18 +61,21 @@ public class DialogBuilder {
         return this;
     }
 
-    public DialogBuilder addOKButton(Paint color, EventHandler<ActionEvent> handler) {
-        JFXButton ok = new JFXButton("确定");
+    public DialogBuilder addOKButton(Paint color, Listener handler) {
+        ok = new JFXButton("确定");
         if (color != null)
             ok.setTextFill(color);
         ok.setOnAction(event -> {
-            alert.hideWithAnimation();
             if (handler != null)
-                handler.handle(event);
+                handler.handle(event, alert);
         });
         ok.setDefaultButton(true);
         actions.add(ok);
         return this;
+    }
+
+    public JFXButton getOKButton() {
+        return ok;
     }
 
     public DialogBuilder addActionButton(JFXButton button) {
@@ -79,7 +83,7 @@ public class DialogBuilder {
         return this;
     }
 
-    public DialogBuilder create() {
+    public JFXAlert<String> create() {
         alert = new JFXAlert<>((Stage) window);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setOverlayClose(false);
@@ -91,18 +95,22 @@ public class DialogBuilder {
             layout.setActions(actions);
 
         alert.setContent(layout);
-        return this;
+        return alert;
+    }
+
+    public JFXAlert<String> getAlert() {
+        return alert;
     }
 
     public JFXDialogLayout getLayout() {
         return layout;
     }
 
-    public void show() {
-        alert.show();
-    }
-
     public void createAndShow() {
         create().show();
+    }
+
+    public interface Listener {
+        void handle(ActionEvent event, JFXAlert<String> alert);
     }
 }

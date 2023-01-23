@@ -1,0 +1,40 @@
+package io.github.ctimet.lieinbedapp0.task;
+
+import io.github.ctimet.lieinbedapp0.gui.Draw;
+import javafx.application.Platform;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class Task {
+    private static final ExecutorService cachedPool = Executors.newCachedThreadPool();
+    private static final ExecutorService fixedPool = Executors.newFixedThreadPool(16);
+
+    public static void runCached(Runnable run) {
+        cachedPool.submit(run);
+    }
+
+    public static void runFixed(Runnable run) {
+        fixedPool.submit(run);
+    }
+
+    public static void runInUIThread(Runnable run) {
+        Platform.runLater(run);
+    }
+
+    public static void delayRunInUIThread(Runnable run, int delay) {
+        Task.runCached(() -> {
+            try {
+                Thread.sleep(delay);
+                Task.runInUIThread(run);
+            } catch (InterruptedException e) {
+                Draw.drawErr(e);
+            }
+        });
+    }
+
+    public static void stop() {
+        cachedPool.shutdown();
+        fixedPool.shutdown();
+    }
+}

@@ -9,7 +9,7 @@ public class Listener {
     public static void startConnector(int port, String password) throws Exception {
         incoming = new ServerSocket(port);
         while (run) {
-            new Thread(new ConnectHandler(incoming.accept(), password));
+            new Thread(new ConnectHandler(incoming.accept(), password)).start();
         }
     }
 

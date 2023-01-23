@@ -1,11 +1,11 @@
 package io.github.ctimet.remoteserver.connect;
 
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class ConnectHandler implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
     private static final HashMap<String, Connection> connMap = new HashMap<>();
     private final Socket socket;
     private final String password;
@@ -30,49 +31,56 @@ public class ConnectHandler implements Runnable {
              OutputStream output = socket.getOutputStream();
              Scanner in = new Scanner(input, "UTF-8");
              PrintStream out = new PrintStream(output, true, "UTF-8")) {
-            //首先第一步，校验密码
-            if (in.nextLine().equals(password)) {
+            //首先第一步，校验密
+            if (in.hasNextLine() && in.nextLine().equals(password)) {
+                out.println("PWT");
                 //第二步，生成对称密钥，然后用发来的公钥加密
                 //发来的公钥
+                if (!in.hasNextLine()) return;
                 String publicKey = in.nextLine();
                 //构建RSA对象
                 RSA rsa = new RSA(null, publicKey);
                 //生成对称密钥
                 byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue()).getEncoded();
                 //使用公钥加密对称密钥，并发送回去
-                out.println(StrUtil.str(rsa.encrypt(key, KeyType.PublicKey), CharsetUtil.CHARSET_UTF_8));
+                out.println(rsa.encryptHex(key, KeyType.PublicKey));
 
                 //第三步，确认这是哪个连接，并建立Connection
-                String connectType = in.nextLine();
-                switch (connectType) {
-                    case "APP-CONSOLE":
-                        if (connMap.containsKey("APP-CONSOLE")) {
-                            return;
+                if (!in.hasNextLine()) return;
+                switch (in.nextLine()) {
+                    case "APP":
+                        if (connMap.containsKey("APP")) {
+                            logger.warn("有不明来源的连接尝试连接到此！");
+                        } else {
+                            Connection conn = new Connection(key, in, out);
+                            connMap.put("APP", conn);
+                            conn.init();
                         }
-                        connMap.put("APP-CONSOLE", new Connection(key, in, out));
                         break;
-                    case "APP-PERFORMANCE":
-                        if (connMap.containsKey("APP-PERFORMANCE")) {
-                            return;
+                    case "ROBOT":
+                        if (connMap.containsKey("ROBOT")) {
+                            logger.warn("有不明来源的连接尝试连接到此！");
+                        } else {
+                            Connection conn = new Connection(key, in, out);
+                            connMap.put("ROBOT", conn);
+                            conn.init();
                         }
-                        connMap.put("APP-PERFORMANCE", new Connection(key, in, out));
                         break;
-                    case "APP-PLAYERS":
-                        if (connMap.containsKey("APP-PLAYERS")) {
-                            return;
+                    case "WEB":
+                        if (connMap.containsKey("WEB")) {
+                            logger.warn("有不明来源的连接尝试连接到此！");
+                        } else {
+                            Connection conn = new Connection(key, in, out);
+                            connMap.put("WEB", conn);
+                            conn.init();
                         }
-                        connMap.put("APP-PLAYERS", new Connection(key, in, out));
-                        break;
-                    case "ROBOT-PERFORMANCE":
-                        if (connMap.containsKey("ROBOT-PERFORMANCE")) {
-                            return;
-                        }
-                        connMap.put("ROBOT-PERFORMANCE", new Connection(key, in, out));
                         break;
                     default:
+                        logger.warn("有不明来源的连接尝试连接到此！");
                 }
             } else {
-                out.println("PW");
+                out.println("PWW");
+                System.out.println("发送PWW");
             }
         } catch (Exception e) {
             e.printStackTrace();

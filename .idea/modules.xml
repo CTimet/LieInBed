@@ -6,7 +6,8 @@
       <module fileurl="file://$PROJECT_DIR$/LieInBed-App/LieInBed-App.iml" filepath="$PROJECT_DIR$/LieInBed-App/LieInBed-App.iml" />
       <module fileurl="file://$PROJECT_DIR$/LieInBed-AppLaucher/LieInBed-AppLaucher.iml" filepath="$PROJECT_DIR$/LieInBed-AppLaucher/LieInBed-AppLaucher.iml" />
       <module fileurl="file://$PROJECT_DIR$/RemoteRobot/RemoteRobot.iml" filepath="$PROJECT_DIR$/RemoteRobot/RemoteRobot.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RemoteServer/RemoteServer.iml" filepath="$PROJECT_DIR$/RemoteServer/RemoteServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LieInBed-App/lieinbedapp.iml" filepath="$PROJECT_DIR$/LieInBed-App/lieinbedapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RemoteServer/remoteserver.iml" filepath="$PROJECT_DIR$/RemoteServer/remoteserver.iml" />
     </modules>
   </component>
 </project>

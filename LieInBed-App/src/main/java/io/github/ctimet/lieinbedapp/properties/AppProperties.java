@@ -6,66 +6,68 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class AppProperties {
     private static final Logger logger = LoggerFactory.getLogger(AppProperties.class);
-    private static final Properties setting = new Properties();
-    private static UsersProperties usersProperties;
-    private static AppProperties appProperties;
-
-    public AppProperties() {
-        try {
-            logger.info("Loading lieinbed/setting.properties");
-            setting.load(new FileInputStream("lieinbed/setting.properties"));
-        } catch (IOException e) {
-            logger.info("The code threw an exception when loading properties");
-            Draw.drawErr(e);
-        }
-    }
-
-    public String getProperty(String key) {
-        return setting.getProperty(key);
-    }
-
-    public void setProperty(String key, String value) {
-        setting.setProperty(key, value);
-    }
-
-    public void save() {
-        try {
-            setting.store(new FileOutputStream("lieinbed/setting.properties"), "");
-        } catch (IOException e) {
-            logger.error("The code threw an exception when storing lieinbed/setting.properties");
-            Draw.drawErr(e);
-        }
-    }
-
-    public static void checkProperties() {
+    private static final File file = new File("lieinbed/app.properties");
+    private static final Properties defaultValue = new Properties() {{
+            put("connect.timeout", "5000");
+            put("connect.scanner.encoding", "UTF-8");
+            put("connect.printstream.autoflush", "true");
+            put("connect.printstream.encoding", "UTF-8");
+    }};
+    private static final HashMap<String, ValueChecker<String>> propertiesChecker = new HashMap<>();
+    private static final Properties pps = new Properties();
+    public static void init() {
         File folder = new File("./lieinbed");
-        logger.info("Creating folder ./lieinbed {}", folder.mkdir());
-
-        File settingProperties = new File("lieinbed/setting.properties");
-        File userProperties = new File("lieinbed/users.properties");
         try {
-            logger.info("Creating lieinbed/setting.properties {}", settingProperties.createNewFile());
-            logger.info("Creating lieinbed/users.properties {}", userProperties.createNewFile());
-        } catch (Exception e) {
-            logger.error("The code threw an exception when creating properties");
-            Draw.drawErr(e);
+            logger.info("Creating folder ./lieinbed...{}", folder.mkdir());
+            logger.info("Creating lieinbed/app.properties...{}", file.createNewFile());
+
+            pps.load(new FileInputStream(file));
+            clickProperty();
+        } catch (IOException e) {
+            Draw.drawErrThenClose(e);
         }
-
-        appProperties = new AppProperties();
-        usersProperties = new UsersProperties();
     }
 
-    public static AppProperties getAppProperties() {
-        return appProperties;
+    private static void clickProperty() {
+        logger.info("Check APP Properties value...");
+        PropertiesUtil.check(pps, propertiesChecker, defaultValue);
     }
 
-    public static UsersProperties getUsersProperties() {
-        return usersProperties;
+    public static void reload() {
+        pps.clear();
+        init();
+    }
+
+    public static void setProperty(String key, String value) {
+        pps.setProperty(key, value);
+    }
+
+    public static String getProperty(String key) {
+        return pps.getProperty(key);
+    }
+
+    public static void removeProperty(String key) {
+        pps.remove(key);
+    }
+
+    public static void addPropertiesCheck(String value, ValueChecker<String> checker) {
+        propertiesChecker.put(value, checker);
+    }
+
+    public static void store() {
+        try {
+            pps.store(new FileWriter(file), "Latest changed at " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

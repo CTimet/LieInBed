@@ -1,6 +1,6 @@
 package io.github.ctimet.lieinbedapp.gui.util;
 
-import io.github.ctimet.lieinbedapp.App;
+import io.github.ctimet.lieinbedapp0.App;
 import javafx.scene.Parent;
 
 import java.util.Objects;

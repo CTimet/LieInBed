@@ -4,12 +4,23 @@
 
 .button {
     -fx-background-color: #2a2a2a;
+    -fx-text-fill: white;
+    -fx-font-size: 14;
 }
 
 .button:hover {
     -fx-background-color: #3b3b3b;
+    /*-fx-background-color: #f3f3f3;*/
 }
 
 .box {
     -fx-background-color: #2a2a2a;
+    /*-fx-background-color: #e2e2e2;*/
+    -fx-opacity: 0.36;
+}
+
+.vBox {
+    -fx-background-radius: 4;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 0);
 }

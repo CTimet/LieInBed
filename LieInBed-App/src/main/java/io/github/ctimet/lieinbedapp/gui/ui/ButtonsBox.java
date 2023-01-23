@@ -1,7 +1,9 @@
 package io.github.ctimet.lieinbedapp.gui.ui;
 
 import com.jfoenix.controls.JFXButton;
-import io.github.ctimet.lieinbedapp.gui.util.CSSStyle;
+import io.github.ctimet.lieinbedapp0.gui.animation.AnimationUtil;
+import io.github.ctimet.lieinbedapp0.gui.util.CSSStyle;
+import io.github.ctimet.lieinbedapp0.task.Task;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,8 +13,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class ButtonsBox extends VBox {
     private final ObservableList<JFXButton> topButtons = FXCollections.observableArrayList();
@@ -22,7 +22,6 @@ public class ButtonsBox extends VBox {
     private String cssClass;
 
     private double childrenHeight;
-    private Paint paint = Color.WHITE;
 
     public ButtonsBox(double layoutX, double layoutY, double prefWidth, double prefHeight) {
         setLayoutX(layoutX);
@@ -33,11 +32,6 @@ public class ButtonsBox extends VBox {
 
     public ButtonsBox setEachSpace(double eachSpace) {
         setSpacing(eachSpace);
-        return this;
-    }
-
-    public ButtonsBox setTextFill(Paint paint) {
-        this.paint = paint;
         return this;
     }
 
@@ -60,18 +54,27 @@ public class ButtonsBox extends VBox {
     public ButtonsBox addTopButton(String label, Node graphic, EventHandler<ActionEvent> handler) {
         JFXButton button = new JFXButton(label);
 
-        button.setGraphic(graphic);
+        if (graphic != null)
+            button.setGraphic(graphic);
         button.setOnAction(handler);
         button.setCursor(Cursor.HAND);
         button.setPrefHeight(childrenHeight);
         button.setPrefWidth(getPrefWidth() - getPadding().getLeft() - getPadding().getRight());
-        button.setTextFill(paint);
         CSSStyle.addStyle(button, cssClass, cssFilePath);
         return addTopButton(button);
     }
 
     public ButtonsBox addTopButton(JFXButton button) {
         topButtons.add(button);
+        return this;
+    }
+
+    public ButtonsBox clearWithAnimation() {
+        AnimationUtil.takeXTranslateAnimation(this, this.getLayoutX(), -1*getPrefWidth()-1, 250);
+        getChildren().clear();
+        topButtons.clear();
+        downButtons.clear();
+        Task.delayRunInUIThread(() -> AnimationUtil.takeXTranslateAnimation(this, -1*getPrefWidth()-1, this.getLayoutX(), 250), 250);
         return this;
     }
 
@@ -82,7 +85,6 @@ public class ButtonsBox extends VBox {
         button.setCursor(Cursor.HAND);
         button.setPrefHeight(childrenHeight);
         button.setPrefWidth(getPrefWidth() - getPadding().getLeft() - getPadding().getRight());
-        button.setTextFill(paint);
         CSSStyle.addStyle(button, cssClass, cssFilePath);
         return addDownButton(button);
     }
