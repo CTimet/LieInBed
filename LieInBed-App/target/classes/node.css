@@ -1,7 +1,3 @@
-/*.buttonClick {*/
-/*    -fx-background-color: #3b3b3b;*/
-/*}*/
-
 .button {
     -fx-background-color: #2a2a2a;
     -fx-text-fill: white;
@@ -10,12 +6,32 @@
 
 .button:hover {
     -fx-background-color: #3b3b3b;
-    /*-fx-background-color: #f3f3f3;*/
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #ffbe59;
+}
+.scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #ffb43a;
+}
+.viewport {
+    -fx-background-color: transparent;
+}
+.scroll-content {
+    -fx-background-color: transparent;
+}
+
+.console {
+    -fx-text-fill: #f3f3f3;
+    -fx-opacity: 0.73;
+    -fx-background-color: #2a2a2a;
 }
 
 .box {
     -fx-background-color: #2a2a2a;
-    /*-fx-background-color: #e2e2e2;*/
     -fx-opacity: 0.36;
 }
 

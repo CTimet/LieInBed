@@ -32,8 +32,9 @@ public class Connection {
     }
 
     public void init() {
-        while (in.hasNextLine()) {
-            listener.listen(aes.decryptStr(in.nextLine(), CharsetUtil.CHARSET_UTF_8));
+        String nextLine;
+        while (in.hasNextLine() && !(nextLine = in.nextLine()).equals("CLOSE CONNECT")) {
+            listener.listen(aes.decryptStr(nextLine, CharsetUtil.CHARSET_UTF_8));
         }
     }
 

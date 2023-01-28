@@ -1,7 +1,8 @@
 package io.github.ctimet.lieinbedapp.gui;
 
-import com.jfoenix.controls.JFXScrollPane;
 import io.github.ctimet.lieinbedapp.App;
+import io.github.ctimet.lieinbedapp.gui.handler.LieInBedAbout;
+import io.github.ctimet.lieinbedapp.gui.handler.LieInBedSetting;
 import io.github.ctimet.lieinbedapp.gui.handler.ServerListClickHandler;
 import io.github.ctimet.lieinbedapp.gui.ui.ButtonsBox;
 import io.github.ctimet.lieinbedapp.gui.ui.WarnList;
@@ -11,9 +12,11 @@ import io.github.ctimet.lieinbedapp.gui.util.Task;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -34,34 +37,36 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Draw {
-    private static final Logger logger = LoggerFactory.getLogger(io.github.ctimet.lieinbedapp0.gui.Draw.class);
-
-    private static final WarnList warnList = new WarnList(4, 830, 5);
+    private static final Logger logger = LoggerFactory.getLogger(Draw.class);
     public static final AnchorPane pane = new AnchorPane();
-    public static final JFXScrollPane scrollpane = new JFXScrollPane();
-    public static final VBox content = new VBox();
+    private static final WarnList warnList = new WarnList(4, 830, 5);
+    public static final VBox content = new VBox() {{
+            setPrefWidth(873);
+            setLayoutX(162);
+            setLayoutY(0);
+            setPadding(new Insets(20, 28, 20, 28));
+    }};
+    public static final ScrollPane scrollpane = new ScrollPane() {{
+            setPrefWidth(873);
+            setPrefHeight(680);
+            setLayoutX(162);
+            setLayoutY(0);
+            setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            setContent(content);
+    }};
     public static final ButtonsBox box = new ButtonsBox(0, 0, 162, 680);
 
     public static void draw(Stage stage) {
+        pane.getStylesheets().add(Objects.requireNonNull(App.class.getResource("/node.css")).toExternalForm());
         box.setChildrenHeight(48)
                 .setEachSpace(5)
-                .setButtonStyle("/node.css", "button")
+                .setButtonStyle("button")
                 .setInsets(5, 0, 5, 0);
         drawButtonsBox(box);
+
         CSSStyle.addDefaultStyle(box, "box");
-
-        scrollpane.setPrefWidth(873);
-        scrollpane.setPrefHeight(680);
-        scrollpane.setLayoutX(162);
-        scrollpane.setLayoutY(0);
-        scrollpane.setPadding(new Insets(20, 20, 20, 20));
-
-        content.setPrefWidth(873);
-        content.setLayoutX(162);
-        content.setLayoutY(0);
-        content.setSpacing(10);//每个组件之间相隔10
-
-        scrollpane.getChildren().add(content);
+        CSSStyle.addDefaultStyle(scrollpane, "scroll-bar");
+        CSSStyle.addDefaultStyle(content, "scroll-content");
 
         pane.getChildren().addAll(
                 new ImageView(new Image(Objects.requireNonNull(Draw.class.getResourceAsStream("/background.png")))),
@@ -82,11 +87,22 @@ public class Draw {
     public static void drawButtonsBox(ButtonsBox box) {
         ObjectBinding<Color> WHITE = Bindings.createObjectBinding(() -> Color.WHITE);
 
-        box.addTopButton("服务器列表   ", SVGUtil.list(WHITE, 0.8, 0.8), new ServerListClickHandler())
-                .addTopButton("机器人列表   ", SVGUtil.list(WHITE, 0.8, 0.8), event -> {
+        box.addTopButton("服务   ", SVGUtil.list(WHITE, 0.8, 0.8), new ServerListClickHandler())
+           .addDownButton("设置   ", SVGUtil.settings(WHITE, 0.8, 0.8), new LieInBedSetting())
+           .addDownButton("关于   ", SVGUtil.about(WHITE, 0.8, 0.8), new LieInBedAbout())
+           .init();
+    }
 
-                })
-                .init();
+    public static void drawContent(Node... body) {
+        content.getChildren().setAll(body);
+    }
+
+    public static void addContent(Node... body) {
+        content.getChildren().addAll(body);
+    }
+
+    public static void clearContent() {
+        content.getChildren().clear();
     }
 
     public static void drawWarn(String warn) {
@@ -95,10 +111,6 @@ public class Draw {
     }
 
     public static void drawErr(Throwable t) {
-        drawErrAlert(t, logger);
-    }
-
-    public static void drawErrAlert(Throwable t, Logger logger) {
         logger.info("Print err message");
         t.printStackTrace();
 

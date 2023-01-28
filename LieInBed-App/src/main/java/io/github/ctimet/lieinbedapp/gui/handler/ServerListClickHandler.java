@@ -7,13 +7,13 @@ import com.jfoenix.controls.*;
 import io.github.ctimet.lieinbedapp.gui.Draw;
 import io.github.ctimet.lieinbedapp.gui.animation.AnimationUtil;
 import io.github.ctimet.lieinbedapp.gui.util.DialogBuilder;
+import io.github.ctimet.lieinbedapp.gui.util.SVGUtil;
 import io.github.ctimet.lieinbedapp.gui.util.Task;
 import io.github.ctimet.lieinbedapp.properties.AppProperties;
 import io.github.ctimet.lieinbedapp.server.Server;
 import io.github.ctimet.lieinbedapp.server.ServerConnect;
 import io.github.ctimet.lieinbedapp.server.impl.RemoteServerConnect;
-import io.github.ctimet.lieinbedapp0.servers.connect.Connection;
-import io.github.ctimet.lieinbedapp0.servers.connect.impl.RemoteInformationStream;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -158,15 +158,9 @@ public class ServerListClickHandler implements EventHandler<ActionEvent> {
         Label label = new Label("准备连接服务器");
         VBox box = new VBox(label, bar);
 
-        AnimationUtil.takeJFXLayoutIOTranslation(
+        AnimationUtil.takeJFXLayoutIOTranslation (
                 layout,
-                box,
-                layout.getBody().get(0),
-                -1,
-                -100,
-                200,
-                -1,
-                190
+                box
         );
 
         //这里是异步代码
@@ -219,6 +213,56 @@ public class ServerListClickHandler implements EventHandler<ActionEvent> {
                     
                     //构建ServerConnect
                     ServerConnect connect = new RemoteServerConnect(key, in, out);
+                    Task.runInUIThread(() -> {
+                        JFXTextField nameInput = new JFXTextField();
+                        nameInput.setPromptText("设置服务器名称");
+                        chooseServerDialog.getOKButton().setOnAction(e -> {
+                            String serverName;
+                            if (nameInput.getText().equals("")) {
+                                Draw.drawWarn("未配置服务器名称，LieInBed已经自动生成。");
+                                serverName = "服务器 " + (Server.getServers().size() + 1);
+                            } else {
+                                serverName = nameInput.getText();
+                            }
+
+                            Server.addServer(serverName, connect);
+                            chooseServerDialog.getAlert().hideWithAnimation();
+
+                            Draw.box.clearWithAnimation()
+                                    .addTopButton(
+                                            "控制   ",
+                                            null,
+                                            new ServerConsoleHandler(connect)
+                                    )
+                                    .addTopButton(
+                                            "性能   ",
+                                            null,
+                                            new ServerPerformanceHandler(connect)
+                                    )
+                                    .addTopButton(
+                                            "配置   ",
+                                            null,
+                                            new ServerPerformanceHandler(connect)
+                                    )
+                                    .addTopButton(
+                                            "玩家   ",
+                                            null,
+                                            new ServerPlayerHandler(connect)
+                                    )
+                                    .addDownButton(
+                                            "",
+                                            SVGUtil.back(Bindings.createObjectBinding(() -> Color.WHITE), 1, 1),
+                                            event -> {
+                                                Draw.box.clearWithAnimation();
+                                                Draw.drawButtonsBox(Draw.box);
+                                            })
+                                    .init();
+                        });
+                        AnimationUtil.takeJFXLayoutIOTranslation(
+                                layout,
+                                nameInput
+                        );
+                    });
                     connect.init();
                 }
             } catch (UnknownHostException e) {

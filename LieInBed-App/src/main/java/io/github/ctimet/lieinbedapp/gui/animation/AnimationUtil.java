@@ -51,22 +51,13 @@ public class AnimationUtil {
         return tt;
     }
 
-    public static Animation takeFadeOutXTranslation(Node node, double fromX, double toX, int millis) {
-        takeXTranslateAnimation(node, fromX, toX, millis);
-        return takeFadeAnimation(node, 1, 0, millis);
-    }
-
-    public static Animation takeFadeInXTranslation(Node node, double fromX, double toX, int millis) {
-        takeFadeAnimation(node, 0, 1, millis);
-        return takeXTranslateAnimation(node, fromX, toX, millis);
-    }
-
-    public static void takeJFXLayoutIOTranslation(JFXDialogLayout layout, Node in, Node out, double outFrom, double outTo, double inFrom, double inTo, int millis) {
-        if (outFrom == -1) outFrom = out.getLayoutX();
-        takeFadeOutXTranslation(out, outFrom, outTo, millis).setOnFinished(e1 -> {
-            takeFadeInXTranslation(in, inFrom, inTo, millis).setOnFinished(e2 -> {
-                layout.setBody(in);
-            });
-        });
+    public static void takeJFXLayoutIOTranslation(JFXDialogLayout layout, Node in) {
+        for (Node node : layout.getBody()) {
+            AnimationUtil.takeXTranslateAnimation(node, node.getLayoutX(), -50, 190);
+            AnimationUtil.takeFadeAnimation(node, 1, 0, 190);
+        }
+        layout.setBody(in);
+        AnimationUtil.takeXTranslateAnimation(in, 200, in.getLayoutX(), 190);
+        AnimationUtil.takeFadeAnimation(in, 0, 1.0, 190);
     }
 }

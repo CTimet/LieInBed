@@ -23,6 +23,8 @@ public class App extends Application {
                 value -> value.equals("true") || value.equals("false"));
         AppProperties.addPropertiesCheck("connect.printstream.encoding",
                 value -> CharsetUtil.parse(value, null) != null);
+        AppProperties.addPropertiesCheck("server.console.gui.line.count",
+                value -> NumberUtil.isInteger(value) && Integer.parseInt(value) > 0);
 
         AppProperties.init();
     }

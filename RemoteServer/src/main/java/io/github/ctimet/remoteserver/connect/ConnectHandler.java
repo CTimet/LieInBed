@@ -13,11 +13,16 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class ConnectHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
-    private static final HashMap<String, Connection> connMap = new HashMap<>();
+    private static final HashMap<String, LinkedList<Connection>> connMap = new HashMap<String, LinkedList<Connection>>() {{
+        put("APP", new LinkedList<>());
+        put("ROBOT", new LinkedList<>());
+        put("WEB", new LinkedList<>());
+    }};
     private final Socket socket;
     private final String password;
     public ConnectHandler(Socket socket, String password) {
@@ -49,31 +54,19 @@ public class ConnectHandler implements Runnable {
                 if (!in.hasNextLine()) return;
                 switch (in.nextLine()) {
                     case "APP":
-                        if (connMap.containsKey("APP")) {
-                            logger.warn("有不明来源的连接尝试连接到此！");
-                        } else {
-                            Connection conn = new Connection(key, in, out);
-                            connMap.put("APP", conn);
-                            conn.init();
-                        }
+                        Connection app = new Connection(key, in, out);
+                        connMap.get("APP").add(app);
+                        app.init();
                         break;
                     case "ROBOT":
-                        if (connMap.containsKey("ROBOT")) {
-                            logger.warn("有不明来源的连接尝试连接到此！");
-                        } else {
-                            Connection conn = new Connection(key, in, out);
-                            connMap.put("ROBOT", conn);
-                            conn.init();
-                        }
+                        Connection robot = new Connection(key, in, out);
+                        connMap.get("ROBOT").add(robot);
+                        robot.init();
                         break;
                     case "WEB":
-                        if (connMap.containsKey("WEB")) {
-                            logger.warn("有不明来源的连接尝试连接到此！");
-                        } else {
-                            Connection conn = new Connection(key, in, out);
-                            connMap.put("WEB", conn);
-                            conn.init();
-                        }
+                        Connection conn = new Connection(key, in, out);
+                        connMap.get("WEB").add(conn);
+                        conn.init();
                         break;
                     default:
                         logger.warn("有不明来源的连接尝试连接到此！");

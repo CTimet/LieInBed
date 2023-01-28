@@ -1,6 +1,6 @@
 package io.github.ctimet.lieinbedapp.gui.util;
 
-import io.github.ctimet.lieinbedapp0.gui.Draw;
+import io.github.ctimet.lieinbedapp.gui.Draw;
 import javafx.application.Platform;
 
 import java.util.concurrent.ExecutorService;
@@ -35,7 +35,7 @@ public class Task {
 
     public static void stop() {
         //一般的，应该将程序关闭前要做的操作放在Task.stop中，在App.instance.stop()方法中将执行Task.stop
-        cachedPool.shutdown();
-        fixedPool.shutdown();
+        cachedPool.shutdownNow();
+        fixedPool.shutdownNow();
     }
 }

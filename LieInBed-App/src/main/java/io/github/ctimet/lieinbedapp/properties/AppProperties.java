@@ -17,10 +17,11 @@ public class AppProperties {
     private static final Logger logger = LoggerFactory.getLogger(AppProperties.class);
     private static final File file = new File("lieinbed/app.properties");
     private static final Properties defaultValue = new Properties() {{
-            put("connect.timeout", "5000");
-            put("connect.scanner.encoding", "UTF-8");
-            put("connect.printstream.autoflush", "true");
-            put("connect.printstream.encoding", "UTF-8");
+            setProperty("connect.timeout", "5000");
+            setProperty("connect.scanner.encoding", "UTF-8");
+            setProperty("connect.printstream.autoflush", "true");
+            setProperty("connect.printstream.encoding", "UTF-8");
+            setProperty("server.console.gui.line.count", "10000");
     }};
     private static final HashMap<String, ValueChecker<String>> propertiesChecker = new HashMap<>();
     private static final Properties pps = new Properties();
